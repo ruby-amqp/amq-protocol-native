@@ -19,11 +19,11 @@ jobs:
 
       - name: Check formatting
         working-directory: ext/amq_protocol_native
-        run: cargo fmt -- --check
+        run: cargo +stable fmt -- --check
 
       - name: Clippy
         working-directory: ext/amq_protocol_native
-        run: cargo clippy -- -D warnings
+        run: cargo +stable clippy -- -D warnings
 
   test:
     runs-on: ${{ matrix.os }}
@@ -45,7 +45,7 @@ jobs:
       - name: Set Windows bindgen flags
         if: runner.os == 'Windows'
         run: |
-          $extra = "-D__AMXAVX512INTRIN_H -D__AVX10_2CONVERTINTRIN_H -D__AVX10_2_512CONVERTINTRIN_H -D__AVX512FP16INTRIN_H -D__AVX512VLFP16INTRIN_H"
+          $extra = "-D__AMXAVX512INTRIN_H -D__AVX10_2CONVERTINTRIN_H -D__AVX10_2_512CONVERTINTRIN_H -D__AVX10_2_512NIINTRIN_H -D__AVX512FP16INTRIN_H -D__AVX512VLFP16INTRIN_H"
           if ($env:BINDGEN_EXTRA_CLANG_ARGS) {
             echo "BINDGEN_EXTRA_CLANG_ARGS=$env:BINDGEN_EXTRA_CLANG_ARGS $extra" >> $env:GITHUB_ENV
           } else {
