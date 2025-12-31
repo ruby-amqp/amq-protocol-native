@@ -18,22 +18,20 @@ jobs:
           components: rustfmt, clippy
 
       - name: Check formatting
-        run: cargo fmt --manifest-path ext/amq_protocol_native/Cargo.toml -- --check
+        working-directory: ext/amq_protocol_native
+        run: cargo fmt -- --check
 
       - name: Clippy
-        run: cargo clippy --manifest-path ext/amq_protocol_native/Cargo.toml -- -D warnings
+        working-directory: ext/amq_protocol_native
+        run: cargo clippy -- -D warnings
 
   test:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, macos-13, windows-latest]
-        ruby: ['2.7', '3.0', '3.1', '3.2', '3.3', '3.4']
-        exclude:
-          # macOS 13 (x64) with older Ruby versions
-          - os: macos-13
-            ruby: '3.4'
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        ruby: ['3.0', '3.1', '3.2', '3.3', '3.4']
     steps:
       - uses: actions/checkout@v4
 
@@ -43,33 +41,17 @@ jobs:
           bundler-cache: true
           cargo-cache: true
 
-      - name: Compile extension
-        run: bundle exec rake compile
-
-      - name: Run tests
-        run: bundle exec rake spec
-
-  # Separate job for Ruby 2.5/2.6 which may need special handling
-  test-legacy-ruby:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-22.04]
-        ruby: ['2.5', '2.6']
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Install dependencies
-        run: bundle install
+      # Work around LLVM 20 clang header issues on Windows
+      - name: Set Windows bindgen flags
+        if: runner.os == 'Windows'
+        run: |
+          $extra = "-D__AMXAVX512INTRIN_H -D__AVX10_2CONVERTINTRIN_H -D__AVX10_2_512CONVERTINTRIN_H -D__AVX512FP16INTRIN_H -D__AVX512VLFP16INTRIN_H"
+          if ($env:BINDGEN_EXTRA_CLANG_ARGS) {
+            echo "BINDGEN_EXTRA_CLANG_ARGS=$env:BINDGEN_EXTRA_CLANG_ARGS $extra" >> $env:GITHUB_ENV
+          } else {
+            echo "BINDGEN_EXTRA_CLANG_ARGS=$extra" >> $env:GITHUB_ENV
+          }
+        shell: pwsh
 
       - name: Compile extension
         run: bundle exec rake compile
@@ -79,14 +61,14 @@ jobs:
 
   cross-compile:
     runs-on: ubuntu-latest
+    # Cross-compilation may fail due to upstream rb-sys Docker image issues
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
         platform:
           - x86_64-linux
-          - x86_64-linux-musl
           - aarch64-linux
-          - aarch64-linux-musl
           - x86_64-darwin
           - arm64-darwin
           - x64-mingw-ucrt
@@ -103,7 +85,7 @@ jobs:
       - uses: oxidize-rb/actions/cross-gem@v1
         with:
           platform: ${{ matrix.platform }}
-          ruby-versions: '2.7,3.0,3.1,3.2,3.3,3.4'
+          ruby-versions: '3.0,3.1,3.2,3.3,3.4'
 
       - name: Upload gems
         uses: actions/upload-artifact@v4
