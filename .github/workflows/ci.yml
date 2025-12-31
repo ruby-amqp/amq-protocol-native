@@ -41,11 +41,11 @@ jobs:
           bundler-cache: true
           cargo-cache: true
 
-      # Work around LLVM 20 clang header issues on Windows
+      # Work around LLVM 20 clang header issues on Windows by disabling AVX-512 FP16
       - name: Set Windows bindgen flags
         if: runner.os == 'Windows'
         run: |
-          $extra = "-D__AMXAVX512INTRIN_H -D__AVX10_2CONVERTINTRIN_H -D__AVX10_2_512CONVERTINTRIN_H -D__AVX10_2_512NIINTRIN_H -D__AVX512FP16INTRIN_H -D__AVX512VLFP16INTRIN_H"
+          $extra = "-mno-avx512fp16"
           if ($env:BINDGEN_EXTRA_CLANG_ARGS) {
             echo "BINDGEN_EXTRA_CLANG_ARGS=$env:BINDGEN_EXTRA_CLANG_ARGS $extra" >> $env:GITHUB_ENV
           } else {
