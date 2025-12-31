@@ -8,7 +8,7 @@ This gem is meant to be a **drop-in replacement** for the pure Ruby [amq-protoco
 
 ## Experiment Results
 
-**TL;DR**: heavily optimized `amq-protocol` `2.4.0` demonstrates substantial performance improvements that
+**TL;DR**: heavily optimized `amq-protocol` [`2.4.0` demonstrates substantial performance improvements](https://github.com/ruby-amqp/amq-protocol/releases/tag/v2.4.0) that
 match this Rust implementation.
 
 As a result, the work on this gem **was stopped**.
