@@ -1,0 +1,60 @@
+# Rust build artifacts
+/target/
+ext/amq_protocol_native/target/
+**/*.rs.bk
+
+# Ruby native extension build artifacts
+*.bundle
+*.so
+*.dll
+*.dylib
+*.o
+*.a
+lib/amq/protocol/*.bundle
+lib/amq/protocol/*.so
+lib/amq/protocol/*.dylib
+lib/amq/protocol/*/*.bundle
+lib/amq/protocol/*/*.so
+lib/amq/protocol/*/*.dylib
+
+# Build directories
+tmp/
+pkg/
+
+# Cross-compilation (rb-sys)
+ports/
+
+# IDE and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+\#*\#
+.#*
+
+# macOS
+.DS_Store
+._*
+
+# Ruby version managers
+.ruby-version
+.ruby-gemset
+.rvmrc
+
+# Bundler
+Gemfile.lock
+.bundle/
+vendor/bundle/
+
+# RSpec
+.rspec_status
+
+# Test coverage
+coverage/
+.simplecov
+
+# Documentation
+doc/
+.yardoc/
+rdoc/

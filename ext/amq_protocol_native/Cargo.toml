@@ -1,0 +1,20 @@
+[package]
+name = "amq_protocol_native"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.70"
+authors = ["Michael Klishin <michael.s.klishin@gmail.com>", "RabbitMQ Team"]
+license = "MIT"
+description = "Native AMQP 0.9.1 serialization library for Ruby"
+
+[lib]
+crate-type = ["cdylib"]
+name = "amq_protocol_native"
+
+[dependencies]
+magnus = { version = "0.7", features = ["rb-sys"] }
+bytes = "1.5"
+thiserror = "2"
+
+[build-dependencies]
+rb-sys-env = "0.1"
