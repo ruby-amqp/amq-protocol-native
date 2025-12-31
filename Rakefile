@@ -15,6 +15,7 @@ RbSys::ExtensionTask.new("amq_protocol_native", GEMSPEC) do |ext|
     aarch64-linux-musl
     arm64-darwin
     x64-mingw-ucrt
+    x64-mingw32
     x86_64-darwin
     x86_64-linux
     x86_64-linux-musl
